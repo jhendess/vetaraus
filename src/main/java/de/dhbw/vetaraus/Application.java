@@ -28,10 +28,28 @@ import norsys.netica.Environ;
 import norsys.netica.Net;
 import norsys.netica.NeticaException;
 import norsys.netica.Streamer;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+
+import java.io.IOException;
+import java.util.List;
 
 public class Application {
-    public static void main(String[] args) throws NeticaException {
-        Environ env = new Environ("");
-        Net net = new Net(new Streamer(""));
+    public static void main(String[] args) throws NeticaException, CmdLineException, IOException {
+        ApplicationConfiguration config = parseCmd(args);
+
+        List<Case> cases = CSV.parse(config.getFile());
+
+        System.out.println(cases);
+
+//        Environ env = new Environ("");
+//        Net net = new Net(new Streamer(""));
+    }
+
+    private static ApplicationConfiguration parseCmd(String[] args) throws CmdLineException {
+        ApplicationConfiguration config = ApplicationConfiguration.getInstance();
+        CmdLineParser parser = new CmdLineParser(config);
+        parser.parseArgument(args);
+        return config;
     }
 }
