@@ -24,6 +24,14 @@
 
 package de.dhbw.vetaraus;
 
-public class Application {
+import norsys.netica.Environ;
+import norsys.netica.Net;
+import norsys.netica.NeticaException;
+import norsys.netica.Streamer;
 
+public class Application {
+    public static void main(String[] args) throws NeticaException {
+        Environ env = new Environ("");
+        Net net = new Net(new Streamer(""));
+    }
 }
