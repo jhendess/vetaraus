@@ -21,7 +21,7 @@ public class CSV {
     private static final String HEADER_MARRIED = "Verheiratet";
     private static final String HEADER_CHILDREN = "Kinderzahl";
     private static final String HEADER_DEGREE = "Abschluss";
-    public static final String HEADER_OCCUPATION = "Beruf";
+    private static final String HEADER_OCCUPATION = "Beruf";
     private static final String HEADER_INCOME = "Familieneinkommen";
     private static final String HEADER_TARIFF = "Versicherung";
 
