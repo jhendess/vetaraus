@@ -33,7 +33,7 @@ public class CSV {
             final CSVParser parser = new CSVParser(file, CSVFormat.DEFAULT.withDelimiter(';').withHeader(
                     HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED, HEADER_CHILDREN, HEADER_DEGREE,
                     HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF
-            ));
+            ).withSkipHeaderRecord(true));
 
 
             List<Case> records = new ArrayList<Case>();
