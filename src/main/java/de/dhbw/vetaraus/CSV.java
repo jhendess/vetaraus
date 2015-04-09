@@ -2,6 +2,7 @@ package de.dhbw.vetaraus;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -43,12 +44,11 @@ public class CSV {
              InputStreamReader isr = new InputStreamReader(fis);
              BufferedReader file = new BufferedReader(isr)) {
 
-            final CSVParser parser = new CSVParser(file, CSVFormat.DEFAULT.withDelimiter(',').withHeader(           // FIXME: Change delimeter when CSV wrapper is implemented
+            final CSVParser parser = new CSVParser(file, CSVFormat.DEFAULT.withDelimiter(';').withHeader(
                     HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED, HEADER_CHILDREN, HEADER_DEGREE,
                     HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF
             ).withSkipHeaderRecord(true));
-
-
+            
             return parser.getRecords().stream().map(record -> new Case(
                     record.get(HEADER_NUMBER),
                     sanitizeRecordValue(record.get(HEADER_AGE)),
@@ -73,5 +73,11 @@ public class CSV {
         return StringUtils.replaceEach(output, REPLACE_SEARCH_LIST, REPLACE_REPLACEMENT_LIST);
     }
 
-
+    public static void write(List<Case> cases, Appendable out) throws IOException {
+        CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
+        // print headers
+        writer.print(new Case(HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED,
+                HEADER_CHILDREN, HEADER_DEGREE, HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF));
+        writer.printRecords(cases);
+    }
 }
