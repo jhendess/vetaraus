@@ -24,87 +24,78 @@
 
 package de.dhbw.vetaraus;
 
+import com.sun.tools.internal.jxc.ap.Const;
 import norsys.netica.*;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 public class Application {
 
-    public static void main(String[] args) throws NeticaException, CmdLineException, IOException {
+    public static void main(String[] args) throws Exception {
         ApplicationConfiguration config = parseCmd(args);
+
+        System.out.println(config.getFile());
+        System.out.println(config.getNet());
+
+        Net net;
+
+        if (!StringUtils.isEmpty(config.getLearn())) {
+            net = NetFactory.fromCases(config.getLearn());
+        } else if (!StringUtils.isEmpty(config.getNet())) {
+            net = NetFactory.fromExisting(config.getNet());
+        } else {
+            throw new Exception("--net oder --cases muss angegeben werden.");
+        }
 
         List<Case> cases = CSV.parse(config.getFile());
 
-        Set<String> altersgruppen = new TreeSet<>();
-        Set<String> degrees = new TreeSet<>();
-        Set<String> jobs = new TreeSet<>();
-        Set<String> incomes = new TreeSet<>();
-        Set<String> tariffs = new TreeSet<>();
-
-
-        // Find all states
         for (Case c : cases) {
-            altersgruppen.add(c.getAge());
-            degrees.add(c.getDegree());
-            jobs.add(c.getOccupation());
-            incomes.add(c.getIncome());
-            tariffs.add(c.getTariff());
+            if (!StringUtils.isEmpty(c.getAge())) {
+                net.getNode(Constants.NODE_AGE).finding().enterState(c.getAge());
+            }
+
+            if (!StringUtils.isEmpty(c.getGender())) {
+                net.getNode(Constants.NODE_GENDER).finding().enterState(c.getGender());
+            }
+
+            if (!StringUtils.isEmpty(c.getMarried())) {
+                net.getNode(Constants.NODE_MARRIED).finding().enterState(c.getMarried());
+            }
+
+            if (!StringUtils.isEmpty(c.getChildren())) {
+                net.getNode(Constants.NODE_CHILDREN).finding().enterState(c.getChildren());
+            }
+
+            if (!StringUtils.isEmpty(c.getDegree())) {
+                net.getNode(Constants.NODE_DEGREE).finding().enterState(c.getDegree());
+            }
+
+            if (!StringUtils.isEmpty(c.getOccupation())) {
+                net.getNode(Constants.NODE_OCCUPATION).finding().enterState(c.getOccupation());
+            }
+
+            if (!StringUtils.isEmpty(c.getIncome())) {
+                net.getNode(Constants.NODE_INCOME).finding().enterState(c.getIncome());
+            }
+
+            Node insurance = net.getNode(Constants.NODE_INSURANCE);
+            float[] bs = insurance.getBeliefs();
+            float highest = 0.0f;
+            int highestIndex = 0;
+
+            for (int i = 0; i < bs.length; i++) {
+                if (bs[i]> highest) {
+                    highest = bs[i];
+                    highestIndex = i;
+                }
+            }
+
+            System.out.println(insurance.state(highestIndex));
+            net.retractFindings();
         }
-
-        //System.out.println(cases);
-
-//        Environ env = new Environ("");
-//        Net net = new Net(new Streamer(""));
-
-
-        Environ env = new Environ("");
-        Net net = new Net(env);
-
-        Caseset caseset = new Caseset();
-        caseset.addCases(new Streamer(config.getFile()), 1.0, null);
-
-        NodeList nodeList = new NodeList(net);
-        Node altersgruppe = new Node("Altersgruppe", StringUtils.join(altersgruppen, ','), net);
-        Node geschlecht = new Node("Geschlecht", "m,w", net);
-        Node verheiratet = new Node("Verheiratet", "Ja,Nein", net);
-        Node kinderzahl = new Node("Kinderzahl", "_0,_1,_2,_3,_4", net);
-        Node abschluss = new Node("Abschluss", StringUtils.join(degrees, ','), net);
-        Node beruf = new Node("Beruf", StringUtils.join(jobs, ','), net);
-        Node familieneinkommen = new Node("Familieneinkommen", StringUtils.join(incomes, ','), net);
-        Node versicherung = new Node("Versicherung", StringUtils.join(tariffs, ','), net);
-
-        versicherung.addLink(altersgruppe);
-        versicherung.addLink(geschlecht);
-        versicherung.addLink(verheiratet);
-        versicherung.addLink(kinderzahl);
-        versicherung.addLink(abschluss);
-        versicherung.addLink(beruf);
-        versicherung.addLink(familieneinkommen);
-
-        nodeList.add(altersgruppe);
-        nodeList.add(geschlecht);
-        nodeList.add(verheiratet);
-        nodeList.add(kinderzahl);
-        nodeList.add(abschluss);
-        nodeList.add(beruf);
-        nodeList.add(familieneinkommen);
-        nodeList.add(versicherung);
-
-
-        Learner learner = new Learner(Learner.EM_LEARNING);
-        learner.learnCPTs(nodeList, caseset, 1.0);
-
-        for (Node n : (Vector<Node>) nodeList) {
-            System.out.println(Arrays.toString(n.getBeliefs()));
-        }
-
-        System.out.println(nodeList);
-
-
     }
 
     private static ApplicationConfiguration parseCmd(String[] args) throws CmdLineException {
