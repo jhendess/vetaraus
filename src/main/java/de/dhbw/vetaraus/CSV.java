@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,16 +52,30 @@ public class CSV {
 
             return parser.getRecords().stream().map(record -> new Case(
                     record.get(HEADER_NUMBER),
-                    sanitizeRecordValue(record.get(HEADER_AGE)),
-                    sanitizeRecordValue(record.get(HEADER_GENDER)),
-                    sanitizeRecordValue(record.get(HEADER_MARRIED)),
-                    sanitizeRecordValue(record.get(HEADER_CHILDREN)),
-                    sanitizeRecordValue(record.get(HEADER_DEGREE)),
-                    sanitizeRecordValue(record.get(HEADER_OCCUPATION)),
-                    sanitizeRecordValue(record.get(HEADER_INCOME)),
+                    record.get(HEADER_AGE),
+                    record.get(HEADER_GENDER),
+                    record.get(HEADER_MARRIED),
+                    record.get(HEADER_CHILDREN),
+                    record.get(HEADER_DEGREE),
+                    record.get(HEADER_OCCUPATION),
+                    record.get(HEADER_INCOME),
                     record.get(HEADER_TARIFF)
             )).collect(Collectors.toList());
         }
+    }
+
+    public static List<Case> sanitizeCases(List<Case> cases) {
+        return cases.stream().map(c -> new Case(
+                c.getNumber(),
+                sanitizeRecordValue(c.getAge()),
+                sanitizeRecordValue(c.getGender()),
+                sanitizeRecordValue(c.getMarried()),
+                sanitizeRecordValue(c.getChildren()),
+                sanitizeRecordValue(c.getDegree()),
+                sanitizeRecordValue(c.getOccupation()),
+                sanitizeRecordValue(c.getIncome()),
+                c.getTariff()
+        )).collect(Collectors.toList());
     }
 
     private static String sanitizeRecordValue(String input) {

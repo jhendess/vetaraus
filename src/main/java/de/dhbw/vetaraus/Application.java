@@ -49,8 +49,11 @@ public class Application {
         }
 
         List<Case> cases = CSV.parse(config.getFile());
+        List<Case> sanitizedCases = CSV.sanitizeCases(cases);
 
-        for (Case c : cases) {
+        for (int i =0; i < cases.size(); i++) {
+            Case c = sanitizedCases.get(i);
+
             if (!StringUtils.isEmpty(c.getAge())) {
                 net.getNode(Constants.NODE_AGE).finding().enterState(c.getAge());
             }
@@ -84,13 +87,14 @@ public class Application {
             float highest = 0.0f;
             int highestIndex = 0;
 
-            for (int i = 0; i < bs.length; i++) {
-                if (bs[i]> highest) {
-                    highest = bs[i];
-                    highestIndex = i;
+            for (int j = 0; j < bs.length; j++) {
+                if (bs[j]> highest) {
+                    highest = bs[j];
+                    highestIndex = j;
                 }
             }
-            c.setTariff(insurance.state(highestIndex).getName());
+            // set tariff on unsanitized case!
+            cases.get(i).setTariff(insurance.state(highestIndex).getName());
 
             net.retractFindings();
         }

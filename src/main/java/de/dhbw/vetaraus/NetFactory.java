@@ -17,7 +17,7 @@ public class NetFactory {
     }
 
     public static Net fromCases(String path) throws NeticaException, IOException {
-        List<Case> cases = CSV.parse(path);
+        List<Case> cases =CSV.sanitizeCases(CSV.parse(path));
 
         Set<String> altersgruppen = new TreeSet<>();
         Set<String> degrees = new TreeSet<>();
