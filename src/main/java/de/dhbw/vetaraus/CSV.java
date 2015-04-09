@@ -73,6 +73,16 @@ public class CSV {
         return StringUtils.replaceEach(output, REPLACE_SEARCH_LIST, REPLACE_REPLACEMENT_LIST);
     }
 
+    private static String unsanitizeRecordValue(String input) {
+        String output = input;
+
+        // Append underscore before leading digit
+        if (StringUtils.startsWithAny(output, "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"))
+            output = output.substring(1);
+
+        return StringUtils.replaceEach(output, REPLACE_REPLACEMENT_LIST, REPLACE_SEARCH_LIST);
+    }
+
     public static void write(List<Case> cases, Appendable out) throws IOException {
         try (CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
             // print headers
