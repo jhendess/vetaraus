@@ -90,8 +90,7 @@ public class Application {
                     highestIndex = i;
                 }
             }
-
-            System.out.println(ArrayUtils.toString(insurance.getBeliefs()));
+            
             System.out.println(insurance.state(highestIndex));
 
             net.retractFindings();

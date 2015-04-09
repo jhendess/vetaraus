@@ -48,7 +48,7 @@ public class CSV {
                     HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED, HEADER_CHILDREN, HEADER_DEGREE,
                     HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF
             ).withSkipHeaderRecord(true));
-            
+
             return parser.getRecords().stream().map(record -> new Case(
                     record.get(HEADER_NUMBER),
                     sanitizeRecordValue(record.get(HEADER_AGE)),
@@ -74,12 +74,23 @@ public class CSV {
     }
 
     public static void write(List<Case> cases, Appendable out) throws IOException {
-        CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
-        // print headers
-        writer.print(new Case(HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED,
-                HEADER_CHILDREN, HEADER_DEGREE, HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF));
-        writer.printRecords(cases);
-        writer.flush();
-        writer.close();
+        try (CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
+            // print headers
+            writer.printRecord(HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED,
+                    HEADER_CHILDREN, HEADER_DEGREE, HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF);
+            for (Case c : cases) {
+                writer.printRecord(c.getNumber(),
+                        c.getAge(),
+                        c.getGender(),
+                        c.getMarried(),
+                        c.getChildren(),
+                        c.getDegree(),
+                        c.getOccupation(),
+                        c.getIncome(),
+                        c.getTariff()
+                );
+            }
+            writer.flush();
+        }
     }
 }
