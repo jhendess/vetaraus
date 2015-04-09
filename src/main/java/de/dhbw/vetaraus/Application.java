@@ -26,6 +26,7 @@ package de.dhbw.vetaraus;
 
 import norsys.netica.Net;
 import norsys.netica.Node;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -37,9 +38,6 @@ public class Application {
     public static void main(String[] args) throws Exception {
         ApplicationConfiguration config = parseCmd(args);
 
-        System.out.println(config.getFile());
-        System.out.println(config.getNet());
-
         Net net;
 
         if (!StringUtils.isEmpty(config.getLearn())) {
@@ -47,7 +45,7 @@ public class Application {
         } else if (!StringUtils.isEmpty(config.getNet())) {
             net = NetFactory.fromExisting(config.getNet());
         } else {
-            throw new Exception("--net oder --cases muss angegeben werden.");
+            throw new Exception("--net oder --learn muss angegeben werden.");
         }
 
         List<Case> cases = CSV.parse(config.getFile());
@@ -93,7 +91,9 @@ public class Application {
                 }
             }
 
+            System.out.println(ArrayUtils.toString(insurance.getBeliefs()));
             System.out.println(insurance.state(highestIndex));
+
             net.retractFindings();
         }
     }

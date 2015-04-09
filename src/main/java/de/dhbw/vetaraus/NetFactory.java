@@ -1,9 +1,13 @@
 package de.dhbw.vetaraus;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import norsys.netica.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,8 +41,12 @@ public class NetFactory {
         Environ env = new Environ("");
         Net net = new Net(env);
 
+        // write out sanitized csv file
+        ByteOutputStream out = new ByteOutputStream();
+        CSV.write(cases, new PrintWriter(out));
+
         Caseset caseset = new Caseset();
-        caseset.addCases(new Streamer(path), 1.0, null);
+        caseset.addCases(new Streamer(out, "Cases", env), 1.0, null);
 
         NodeList nodeList = new NodeList(net);
         Node altersgruppe = new Node(Constants.NODE_AGE, StringUtils.join(altersgruppen, ','), net);
