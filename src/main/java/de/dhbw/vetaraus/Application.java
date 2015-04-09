@@ -90,11 +90,12 @@ public class Application {
                     highestIndex = i;
                 }
             }
-            
-            System.out.println(insurance.state(highestIndex));
+            c.setTariff(insurance.state(highestIndex).getName());
 
             net.retractFindings();
         }
+
+        CSV.write(cases, System.out);
     }
 
     private static ApplicationConfiguration parseCmd(String[] args) throws CmdLineException {
