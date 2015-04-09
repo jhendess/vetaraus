@@ -25,25 +25,41 @@
 package de.dhbw.vetaraus;
 
 import norsys.netica.*;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 public class Application {
 
     public static void main(String[] args) throws NeticaException, CmdLineException, IOException {
         ApplicationConfiguration config = parseCmd(args);
 
-        //List<Case> cases = CSV.parse(config.getFile());
+        List<Case> cases = CSV.parse(config.getFile());
+
+        Set<String> altersgruppen = new TreeSet<>();
+        Set<String> degrees = new TreeSet<>();
+        Set<String> jobs = new TreeSet<>();
+        Set<String> incomes = new TreeSet<>();
+        Set<String> tariffs = new TreeSet<>();
+
+
+        // Find all states
+        for (Case c : cases) {
+            altersgruppen.add(c.getAge());
+            degrees.add(c.getDegree());
+            jobs.add(c.getOccupation());
+            incomes.add(c.getIncome());
+            tariffs.add(c.getTariff());
+        }
 
         //System.out.println(cases);
 
 //        Environ env = new Environ("");
 //        Net net = new Net(new Streamer(""));
 
-        // TODO: Add states
 
         Environ env = new Environ("");
         Net net = new Net(env);
@@ -52,14 +68,14 @@ public class Application {
         caseset.addCases(new Streamer(config.getFile()), 1.0, null);
 
         NodeList nodeList = new NodeList(net);
-        Node altersgruppe = new Node("Altersgruppe", 2, net);
-        Node geschlecht = new Node("Geschlecht", 2, net);
-        Node verheiratet = new Node("Verheiratet", 2, net);
-        Node kinderzahl = new Node("Kinderzahl",2, net);
-        Node abschluss = new Node("Abschluss", 2, net);
-        Node beruf = new Node("Beruf", 2, net);
-        Node familieneinkommen = new Node("Familieneinkommen", 2, net);
-        Node versicherung = new Node("Versicherung", 2, net);
+        Node altersgruppe = new Node("Altersgruppe", StringUtils.join(altersgruppen, ','), net);
+        Node geschlecht = new Node("Geschlecht", "m,w", net);
+        Node verheiratet = new Node("Verheiratet", "Ja,Nein", net);
+        Node kinderzahl = new Node("Kinderzahl", "_0,_1,_2,_3,_4", net);
+        Node abschluss = new Node("Abschluss", StringUtils.join(degrees, ','), net);
+        Node beruf = new Node("Beruf", StringUtils.join(jobs, ','), net);
+        Node familieneinkommen = new Node("Familieneinkommen", StringUtils.join(incomes, ','), net);
+        Node versicherung = new Node("Versicherung", StringUtils.join(tariffs, ','), net);
 
         versicherung.addLink(altersgruppe);
         versicherung.addLink(geschlecht);
@@ -79,11 +95,12 @@ public class Application {
         nodeList.add(versicherung);
 
 
-
-
-
         Learner learner = new Learner(Learner.EM_LEARNING);
         learner.learnCPTs(nodeList, caseset, 1.0);
+
+        for (Node n : (Vector<Node>) nodeList) {
+            System.out.println(Arrays.toString(n.getBeliefs()));
+        }
 
         System.out.println(nodeList);
 

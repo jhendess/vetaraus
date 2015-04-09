@@ -30,7 +30,7 @@ public class CSV {
              InputStreamReader isr = new InputStreamReader(fis);
              BufferedReader file = new BufferedReader(isr)) {
 
-            final CSVParser parser = new CSVParser(file, CSVFormat.DEFAULT.withDelimiter(';').withHeader(
+            final CSVParser parser = new CSVParser(file, CSVFormat.DEFAULT.withDelimiter(',').withHeader(
                     HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED, HEADER_CHILDREN, HEADER_DEGREE,
                     HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF
             ).withSkipHeaderRecord(true));
