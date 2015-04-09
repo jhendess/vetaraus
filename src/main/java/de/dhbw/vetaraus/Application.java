@@ -26,7 +26,6 @@ package de.dhbw.vetaraus;
 
 import norsys.netica.Net;
 import norsys.netica.Node;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
