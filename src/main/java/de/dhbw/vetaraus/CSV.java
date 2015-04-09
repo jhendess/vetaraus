@@ -79,5 +79,7 @@ public class CSV {
         writer.print(new Case(HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED,
                 HEADER_CHILDREN, HEADER_DEGREE, HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF));
         writer.printRecords(cases);
+        writer.flush();
+        writer.close();
     }
 }
