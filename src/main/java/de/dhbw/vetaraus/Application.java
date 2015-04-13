@@ -24,7 +24,9 @@
 
 package de.dhbw.vetaraus;
 
+import norsys.netica.Environ;
 import norsys.netica.Net;
+import norsys.netica.NeticaException;
 import norsys.netica.Node;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -34,66 +36,23 @@ import java.util.List;
 
 public class Application {
 
+    private static Environ environment = null;
+
     public static void main(String[] args) throws Exception {
         ApplicationConfiguration config = parseCmd(args);
 
-        Net net;
-
-        if (!StringUtils.isEmpty(config.getLearn())) {
-            net = NetFactory.fromCases(config.getLearn());
-        } else if (!StringUtils.isEmpty(config.getNet())) {
-            net = NetFactory.fromExisting(config.getNet());
-        } else {
-            throw new Exception("--net oder --learn muss angegeben werden.");
-        }
+        Net net = getNetFromConfig(config);
 
         List<Case> cases = CSV.parse(config.getFile());
-        List<Case> sanitizedCases = CSV.sanitizeCases(cases);
+        List<Case> sanitizedCases = SanitizeUtils.sanitizeCases(cases);
 
-        for (int i =0; i < cases.size(); i++) {
-            Case c = sanitizedCases.get(i);
+        for (int i = 0; i < cases.size(); i++) {
+            Case currentCase = sanitizedCases.get(i);
 
-            if (!StringUtils.isEmpty(c.getAge())) {
-                net.getNode(Constants.NODE_AGE).finding().enterState(c.getAge());
-            }
+            setNodeStatesInNet(net, currentCase);
 
-            if (!StringUtils.isEmpty(c.getGender())) {
-                net.getNode(Constants.NODE_GENDER).finding().enterState(c.getGender());
-            }
-
-            if (!StringUtils.isEmpty(c.getMarried())) {
-                net.getNode(Constants.NODE_MARRIED).finding().enterState(c.getMarried());
-            }
-
-            if (!StringUtils.isEmpty(c.getChildren())) {
-                net.getNode(Constants.NODE_CHILDREN).finding().enterState(c.getChildren());
-            }
-
-            if (!StringUtils.isEmpty(c.getDegree())) {
-                net.getNode(Constants.NODE_DEGREE).finding().enterState(c.getDegree());
-            }
-
-            if (!StringUtils.isEmpty(c.getOccupation())) {
-                net.getNode(Constants.NODE_OCCUPATION).finding().enterState(c.getOccupation());
-            }
-
-            if (!StringUtils.isEmpty(c.getIncome())) {
-                net.getNode(Constants.NODE_INCOME).finding().enterState(c.getIncome());
-            }
-
-            Node insurance = net.getNode(Constants.NODE_INSURANCE);
-            float[] bs = insurance.getBeliefs();
-            float highest = 0.0f;
-            int highestIndex = 0;
-
-            for (int j = 0; j < bs.length; j++) {
-                if (bs[j]> highest) {
-                    highest = bs[j];
-                    highestIndex = j;
-                }
-            }
-            // set tariff on unsanitized case!
-            cases.get(i).setTariff(insurance.state(highestIndex).getName());
+            String tariffName = getMostLikelyTariffName(net);
+            cases.get(i).setTariff(tariffName);
 
             net.retractFindings();
         }
@@ -101,10 +60,72 @@ public class Application {
         CSV.write(cases, System.out);
     }
 
+    static void setNodeState(Node node, String value) throws NeticaException {
+        if (StringUtils.isNotEmpty(value)) {
+            node.finding().enterState(value);
+        }
+    }
+
+    private static String getMostLikelyTariffName(Net net) throws NeticaException {
+        Node insurance = net.getNode(Constants.NODE_INSURANCE);
+        float[] bs = insurance.getBeliefs();
+        float highest = 0.0f;
+        int highestIndex = 0;
+
+        for (int j = 0; j < bs.length; j++) {
+            if (bs[j] > highest) {
+                highest = bs[j];
+                highestIndex = j;
+            }
+        }
+
+        // set tariff on unsanitized case!
+        return insurance.state(highestIndex).getName();
+    }
+
+    private static void setNodeStatesInNet(Net net, Case c) throws NeticaException {
+        setNodeState(net.getNode(Constants.NODE_AGE), c.getAge());
+        setNodeState(net.getNode(Constants.NODE_GENDER), c.getGender());
+        setNodeState(net.getNode(Constants.NODE_MARRIED), c.getMarried());
+        setNodeState(net.getNode(Constants.NODE_CHILDCOUNT), c.getChildCount());
+        setNodeState(net.getNode(Constants.NODE_DEGREE), c.getDegree());
+        setNodeState(net.getNode(Constants.NODE_OCCUPATION), c.getOccupation());
+        setNodeState(net.getNode(Constants.NODE_INCOME), c.getIncome());
+    }
+
+    private static Net getNetFromConfig(ApplicationConfiguration config) throws Exception {
+        Net net;
+        if (!StringUtils.isEmpty(config.getLearn())) {
+            net = NetFactory.fromCases(config.getLearn());
+        } else if (!StringUtils.isEmpty(config.getNet())) {
+            net = NetFactory.fromExisting(config.getNet());
+        } else {
+            throw new Exception("--net oder --learn muss angegeben werden.");
+        }
+        return net;
+    }
+
     private static ApplicationConfiguration parseCmd(String[] args) throws CmdLineException {
         ApplicationConfiguration config = ApplicationConfiguration.getInstance();
         CmdLineParser parser = new CmdLineParser(config);
         parser.parseArgument(args);
         return config;
+    }
+
+    /**
+     * Returns the global environment for Netica.
+     *
+     * @return the global environment for Netica.
+     */
+    public static Environ getEnvironment() {
+        if (environment == null) {
+            try {
+                environment = new Environ("");
+            } catch (NeticaException e) {
+                // Don't ever try this at home:
+                throw new RuntimeException(e);
+            }
+        }
+        return environment;
     }
 }

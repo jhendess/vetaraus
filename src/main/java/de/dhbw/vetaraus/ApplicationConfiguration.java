@@ -4,7 +4,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 /**
- * Created by niklas on 07.04.15.
+ * Application configuration bean - fields are set through Args4j.
  */
 public class ApplicationConfiguration {
 
@@ -31,11 +31,11 @@ public class ApplicationConfiguration {
         return file;
     }
 
-    public String getNet() {
-        return net;
-    }
-
     public String getLearn() {
         return learn;
+    }
+
+    public String getNet() {
+        return net;
     }
 }

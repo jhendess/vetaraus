@@ -25,38 +25,39 @@
 package de.dhbw.vetaraus;
 
 public class Case {
+
     private String number;
+
     private String age;
+
     private String gender;
+
     private String married;
-    private String children;
+
+    private String childCount;
+
     private String degree;
+
     private String occupation;
+
     private String income;
+
     private String tariff;
 
     public Case() {
 
     }
 
-    public Case(String number, String age, String gender, String married, String children, String degree, String occupation, String income, String tariff) {
+    public Case(String number, String age, String gender, String married, String childCount, String degree, String occupation, String income, String tariff) {
         this.number = number;
         this.age = age;
         this.gender = gender;
         this.married = married;
-        this.children = children;
+        this.childCount = childCount;
         this.degree = degree;
         this.occupation = occupation;
         this.income = income;
         this.tariff = tariff;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public String getAge() {
@@ -67,28 +68,12 @@ public class Case {
         this.age = age;
     }
 
-    public String getGender() {
-        return gender;
+    public String getChildCount() {
+        return childCount;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getMarried() {
-        return married;
-    }
-
-    public void setMarried(String married) {
-        this.married = married;
-    }
-
-    public String getChildren() {
-        return children;
-    }
-
-    public void setChildren(String children) {
-        this.children = children;
+    public void setChildCount(String childCount) {
+        this.childCount = childCount;
     }
 
     public String getDegree() {
@@ -99,12 +84,12 @@ public class Case {
         this.degree = degree;
     }
 
-    public String getOccupation() {
-        return occupation;
+    public String getGender() {
+        return gender;
     }
 
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getIncome() {
@@ -113,6 +98,30 @@ public class Case {
 
     public void setIncome(String income) {
         this.income = income;
+    }
+
+    public String getMarried() {
+        return married;
+    }
+
+    public void setMarried(String married) {
+        this.married = married;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
     }
 
     public String getTariff() {
@@ -130,7 +139,7 @@ public class Case {
                 ", age='" + age + '\'' +
                 ", gender='" + gender + '\'' +
                 ", married='" + married + '\'' +
-                ", children='" + children + '\'' +
+                ", childCount='" + childCount + '\'' +
                 ", degree='" + degree + '\'' +
                 ", occupation='" + occupation + '\'' +
                 ", income='" + income + '\'' +

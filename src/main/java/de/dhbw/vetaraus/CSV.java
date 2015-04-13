@@ -27,7 +27,6 @@ package de.dhbw.vetaraus;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -56,10 +55,6 @@ public class CSV {
 
     private static final String HEADER_TARIFF = "Versicherung";
 
-    private static final String[] REPLACE_SEARCH_LIST = new String[]{" ", "-", "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß", "<", ">"};
-
-    private static final String[] REPLACE_REPLACEMENT_LIST = new String[]{"_", "_", "ae", "oe", "ue", "AE", "OE", "UE", "ß", "LESS", "GREATER"};
-
     public static List<Case> parse(String path) throws IOException {
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -84,40 +79,6 @@ public class CSV {
         }
     }
 
-    public static List<Case> sanitizeCases(List<Case> cases) {
-        return cases.stream().map(c -> new Case(
-                c.getNumber(),
-                sanitizeRecordValue(c.getAge()),
-                sanitizeRecordValue(c.getGender()),
-                sanitizeRecordValue(c.getMarried()),
-                sanitizeRecordValue(c.getChildren()),
-                sanitizeRecordValue(c.getDegree()),
-                sanitizeRecordValue(c.getOccupation()),
-                sanitizeRecordValue(c.getIncome()),
-                c.getTariff()
-        )).collect(Collectors.toList());
-    }
-
-    private static String sanitizeRecordValue(String input) {
-        String output = input;
-
-        // Append underscore before leading digit
-        if (StringUtils.startsWithAny(output, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"))
-            output = "_" + output;
-
-        return StringUtils.replaceEach(output, REPLACE_SEARCH_LIST, REPLACE_REPLACEMENT_LIST);
-    }
-
-    private static String unsanitizeRecordValue(String input) {
-        String output = input;
-
-        // Append underscore before leading digit
-        if (StringUtils.startsWithAny(output, "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"))
-            output = output.substring(1);
-
-        return StringUtils.replaceEach(output, REPLACE_REPLACEMENT_LIST, REPLACE_SEARCH_LIST);
-    }
-
     public static void write(List<Case> cases, Appendable out) throws IOException {
         try (CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
             // print headers
@@ -128,7 +89,7 @@ public class CSV {
                         c.getAge(),
                         c.getGender(),
                         c.getMarried(),
-                        c.getChildren(),
+                        c.getChildCount(),
                         c.getDegree(),
                         c.getOccupation(),
                         c.getIncome(),
