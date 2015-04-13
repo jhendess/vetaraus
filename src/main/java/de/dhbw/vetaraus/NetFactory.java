@@ -38,7 +38,7 @@ public class NetFactory {
     }
 
     /**
-     * Create a new Netica net from an existing CSV file. Cases are learned through gradient algorithm.
+     * Create a new Netica net from an existing CSV file. Cases are learned through gradient descent learning algorithm.
      *
      * @param path
      *         Filepath of the CSV file
@@ -99,7 +99,7 @@ public class NetFactory {
         nodeList.add(incomeNode);
         nodeList.add(tariffNode);
 
-        Learner learner = new Learner(Learner.EM_LEARNING);
+        Learner learner = new Learner(Learner.GRADIENT_DESCENT_LEARNING);
         learner.learnCPTs(nodeList, caseset, 1.0);
 
         return net;
