@@ -16,6 +16,9 @@ public class ApplicationConfiguration {
     @Option(name="--net")
     private String net = "";
 
+    @Option(name="--netOut")
+    private String netOut = "";
+
     @Option(name = "--learn")
     private String learn = "";
 
@@ -37,5 +40,9 @@ public class ApplicationConfiguration {
 
     public String getNet() {
         return net;
+    }
+
+    public String getNetOut() {
+        return netOut;
     }
 }

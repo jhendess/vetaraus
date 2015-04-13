@@ -116,6 +116,8 @@ public class NetFactory {
 
     public static Net fromExisting(String path) throws NeticaException {
         Environ env = Application.getEnvironment();
-        return new Net(new Streamer(path));
+        Net net = new Net(new Streamer(path));
+        net.compile();
+        return net;
     }
 }

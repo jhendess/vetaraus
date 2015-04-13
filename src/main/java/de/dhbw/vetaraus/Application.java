@@ -24,10 +24,7 @@
 
 package de.dhbw.vetaraus;
 
-import norsys.netica.Environ;
-import norsys.netica.Net;
-import norsys.netica.NeticaException;
-import norsys.netica.Node;
+import norsys.netica.*;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -58,6 +55,15 @@ public class Application {
         }
 
         CSV.write(cases, System.out);
+
+        writeNet(net);
+    }
+
+    private static void writeNet(Net net) throws NeticaException {
+        String netOut = ApplicationConfiguration.getInstance().getNetOut();
+        if (StringUtils.isNotEmpty(netOut)) {
+            net.write(new Streamer(netOut));
+        }
     }
 
     static void setNodeState(Node node, String value) throws NeticaException {
