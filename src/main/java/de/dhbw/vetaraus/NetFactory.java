@@ -107,7 +107,7 @@ public class NetFactory {
 
     private static Caseset getCaseset(List<Case> cases) throws IOException, NeticaException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        CSV.write(cases, new PrintWriter(out));
+        CSV.write(cases, ',', new PrintWriter(out));
         InputStream in = new ByteArrayInputStream(out.toByteArray());
         Caseset caseset = new Caseset();
         caseset.addCases(new Streamer(in, "Cases", Application.getEnvironment()), 1.0, null);

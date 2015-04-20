@@ -79,8 +79,8 @@ public class CSV {
         }
     }
 
-    public static void write(List<Case> cases, Appendable out) throws IOException {
-        try (CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';'))) {
+    public static void write(List<Case> cases, Character delimiter, Appendable out) throws IOException {
+        try (CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(delimiter))) {
             // print headers
             writer.printRecord(HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED,
                     HEADER_CHILDREN, HEADER_DEGREE, HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF);

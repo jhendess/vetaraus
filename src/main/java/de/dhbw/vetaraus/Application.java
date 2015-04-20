@@ -54,7 +54,7 @@ public class Application {
             net.retractFindings();
         }
 
-        CSV.write(cases, System.out);
+        CSV.write(cases, ';', System.out);
 
         writeNet(net);
     }
