@@ -1,0 +1,3 @@
+[submodule "doc"]
+	path = doc
+	url = git@bitbucket.org:Niklas_/vetaraus.git
