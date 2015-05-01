@@ -19,14 +19,3 @@ Nr;Altersgruppe;Geschlecht;Verheiratet;Kinderzahl;Abschluss;Beruf;Familieneinkom
 55;19-24;m;nein;0;keiner;Arbeiter;1000-1999;Tarif_C
 87;<18;w;nein;0;keiner;Angestellter;2000-2999;Tarif_C
 65;19-24;m;nein;0;Realschule;Arbeitslos;2000-2999;Tarif_C
-30;<18;w;nein;0;keiner;Hausfrau;2000-2999;Tarif_C
-82;25-35;m;nein;1;Hochschule;Angestellter;2000-2999;Tarif_C
-95;25-35;w;nein;0;Realschule;Angestellter;2000-2999;Tarif_C
-44;36-49;m;nein;1;Hauptschule;Angestellter;3000-3999;Tarif_B
-90;19-24;m;nein;0;Gymnasium;Arbeiter;2000-2999;Tarif_C
-17;25-35;m;nein;1;Hochschule;Angestellter;3000-3999;Tarif_B
-10;50-65;m;nein;0;Promotion;Fuehrungskraft;5000 und mehr;Tarif_B
-27;36-49;w;ja;2;keiner;Arbeiter;1000-1999;Tarif_A
-81;25-35;m;nein;0;keiner;Arbeiter;1000-1999;Tarif_C
-23;36-49;w;ja;1;keiner;Angestellter;2000-2999;Tarif_A
-59;19-24;w;nein;0;Hauptschule;Hausfrau;1000-1999;Tarif_C
