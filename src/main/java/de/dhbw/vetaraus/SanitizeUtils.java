@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Static helper methods for sanitizing record values.
+ * Static helper methods for sanitizing record values. This is necessary because of Netica's internal string
+ * handling.
  */
 public class SanitizeUtils {
 
@@ -60,13 +61,4 @@ public class SanitizeUtils {
         return StringUtils.replaceEach(output, REPLACE_SEARCH_LIST, REPLACE_REPLACEMENT_LIST);
     }
 
-    private static String unsanitizeRecordValue(String input) {
-        String output = input;
-
-        // Append underscore before leading digit
-        if (StringUtils.startsWithAny(output, "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"))
-            output = output.substring(1);
-
-        return StringUtils.replaceEach(output, REPLACE_REPLACEMENT_LIST, REPLACE_SEARCH_LIST);
-    }
 }

@@ -41,4 +41,22 @@ public class Constants {
     public static final String NODE_INCOME = "Familieneinkommen";
 
     public static final String NODE_INSURANCE = "Versicherung";
+
+    public static final String HEADER_NUMBER = "Nr";
+
+    public static final String HEADER_AGE = "Altersgruppe";
+
+    public static final String HEADER_GENDER = "Geschlecht";
+
+    public static final String HEADER_MARRIED = "Verheiratet";
+
+    public static final String HEADER_CHILDREN = "Kinderzahl";
+
+    public static final String HEADER_DEGREE = "Abschluss";
+
+    public static final String HEADER_OCCUPATION = "Beruf";
+
+    public static final String HEADER_INCOME = "Familieneinkommen";
+
+    public static final String HEADER_TARIFF = "Versicherung";
 }

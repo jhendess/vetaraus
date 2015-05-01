@@ -24,55 +24,26 @@
 
 package de.dhbw.vetaraus;
 
-import norsys.netica.*;
-import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
+import norsys.netica.Net;
+import norsys.netica.NeticaException;
+import norsys.netica.Node;
 
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 public class Application {
 
-    private static Environ environment = null;
-
     public static void main(String[] args) throws Exception {
-        ApplicationConfiguration config = parseCmd(args);
-
-        Net net = getNetFromConfig(config);
-
-        List<Case> cases = CSV.parse(config.getFile());
-        List<Case> sanitizedCases = SanitizeUtils.sanitizeCases(cases);
-
-        for (int i = 0; i < cases.size(); i++) {
-            Case currentCase = sanitizedCases.get(i);
-
-            setNodeStatesInNet(net, currentCase);
-
-            String tariffName = getMostLikelyTariffName(net);
-            cases.get(i).setTariff(tariffName);
-
-            net.retractFindings();
-        }
-
-        CSV.write(cases, ';', System.out);
-
-        writeNet(net);
+        new Application().run(args);
     }
 
-    private static void writeNet(Net net) throws NeticaException {
-        String netOut = ApplicationConfiguration.getInstance().getNetOut();
-        if (StringUtils.isNotEmpty(netOut)) {
-            net.write(new Streamer(netOut));
-        }
-    }
-
-    static void setNodeState(Node node, String value) throws NeticaException {
-        if (StringUtils.isNotEmpty(value)) {
-            node.finding().enterState(value);
-        }
-    }
-
-    private static String getMostLikelyTariffName(Net net) throws NeticaException {
+    /**
+     * Returns the most likely tariff name in the given net configuration.
+     *
+     * @throws NeticaException
+     */
+    private String getMostLikelyTariffName(Net net) throws NeticaException {
         Node insurance = net.getNode(Constants.NODE_INSURANCE);
         float[] bs = insurance.getBeliefs();
         float highest = 0.0f;
@@ -89,49 +60,51 @@ public class Application {
         return insurance.state(highestIndex).getName();
     }
 
-    private static void setNodeStatesInNet(Net net, Case c) throws NeticaException {
-        setNodeState(net.getNode(Constants.NODE_AGE), c.getAge());
-        setNodeState(net.getNode(Constants.NODE_GENDER), c.getGender());
-        setNodeState(net.getNode(Constants.NODE_MARRIED), c.getMarried());
-        setNodeState(net.getNode(Constants.NODE_CHILDCOUNT), c.getChildCount());
-        setNodeState(net.getNode(Constants.NODE_DEGREE), c.getDegree());
-        setNodeState(net.getNode(Constants.NODE_OCCUPATION), c.getOccupation());
-        setNodeState(net.getNode(Constants.NODE_INCOME), c.getIncome());
-    }
+    /**
+     * Apply a list of cases on a Netica net and write each classified output as semicolon-delimted CSV to a
+     * PrintStream.
+     *
+     * @param net
+     *         A trained net on which the cases should be applied.
+     * @param cases
+     *         A list of cases to classify.
+     * @param out
+     *         The PrintWriter on which the output will be printed.
+     * @throws NeticaException
+     * @throws IOException
+     */
+    private void processCaseList(Net net, List<Case> cases, PrintStream out) throws NeticaException, IOException {
+        List<Case> sanitizedCases = SanitizeUtils.sanitizeCases(cases);
 
-    private static Net getNetFromConfig(ApplicationConfiguration config) throws Exception {
-        Net net;
-        if (!StringUtils.isEmpty(config.getLearn())) {
-            net = NetFactory.fromCases(config.getLearn());
-        } else if (!StringUtils.isEmpty(config.getNet())) {
-            net = NetFactory.fromExisting(config.getNet());
-        } else {
-            throw new Exception("--net oder --learn muss angegeben werden.");
+        for (int i = 0; i < cases.size(); i++) {
+            Case currentCase = sanitizedCases.get(i);
+
+            NeticaUtils.setNodeStatesInNet(net, currentCase);
+
+            String tariffName = getMostLikelyTariffName(net);
+            cases.get(i).setTariff(tariffName);
+
+            net.retractFindings();
         }
-        return net;
-    }
 
-    private static ApplicationConfiguration parseCmd(String[] args) throws CmdLineException {
-        ApplicationConfiguration config = ApplicationConfiguration.getInstance();
-        CmdLineParser parser = new CmdLineParser(config);
-        parser.parseArgument(args);
-        return config;
+        CSV.write(cases, ';', out);
     }
 
     /**
-     * Returns the global environment for Netica.
+     * Execute the application with the given command line arguments.
      *
-     * @return the global environment for Netica.
+     * @param args
+     *         Command line arguments - should be taken from the main method.
+     * @throws Exception
      */
-    public static Environ getEnvironment() {
-        if (environment == null) {
-            try {
-                environment = new Environ("");
-            } catch (NeticaException e) {
-                // Don't ever try this at home:
-                throw new RuntimeException(e);
-            }
-        }
-        return environment;
+    private void run(String[] args) throws Exception {
+        ApplicationConfiguration config = ApplicationConfiguration.parseCmd(args);
+        Net net = NeticaUtils.getNetFromConfig(config);
+
+        List<Case> cases = CSV.parse(config.getFile());
+
+        processCaseList(net, cases, System.out);
+        NeticaUtils.writeNet(net, config.getNetOut());
     }
+
 }

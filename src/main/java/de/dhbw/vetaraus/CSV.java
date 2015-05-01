@@ -37,53 +37,61 @@ import java.util.stream.Collectors;
 
 public class CSV {
 
-    private static final String HEADER_NUMBER = "Nr";
-
-    private static final String HEADER_AGE = "Altersgruppe";
-
-    private static final String HEADER_GENDER = "Geschlecht";
-
-    private static final String HEADER_MARRIED = "Verheiratet";
-
-    private static final String HEADER_CHILDREN = "Kinderzahl";
-
-    private static final String HEADER_DEGREE = "Abschluss";
-
-    private static final String HEADER_OCCUPATION = "Beruf";
-
-    private static final String HEADER_INCOME = "Familieneinkommen";
-
-    private static final String HEADER_TARIFF = "Versicherung";
-
+    /**
+     * Create a list of Case objects from a given filepath. The filepath must be a CSV file with semicolon-delimited
+     * entries. The first line of the file (header record) will be ignored.
+     * <p>
+     * Each line of the file must have the following values:
+     * ID, age, gender, married, children, degree, occupation, income, tariff.
+     *
+     * @param path
+     *         Path to the CSV file.
+     * @return a list of Case objects from the given input file.
+     * @throws IOException
+     */
     public static List<Case> parse(String path) throws IOException {
         try (FileInputStream fis = new FileInputStream(path);
              InputStreamReader isr = new InputStreamReader(fis);
              BufferedReader file = new BufferedReader(isr)) {
 
             final CSVParser parser = new CSVParser(file, CSVFormat.DEFAULT.withDelimiter(';').withHeader(
-                    HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED, HEADER_CHILDREN, HEADER_DEGREE,
-                    HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF
+                    Constants.HEADER_NUMBER, Constants.HEADER_AGE, Constants.HEADER_GENDER, Constants.HEADER_MARRIED, Constants.HEADER_CHILDREN, Constants.HEADER_DEGREE,
+                    Constants.HEADER_OCCUPATION, Constants.HEADER_INCOME, Constants.HEADER_TARIFF
             ).withSkipHeaderRecord(true));
 
             return parser.getRecords().stream().map(record -> new Case(
-                    record.get(HEADER_NUMBER),
-                    record.get(HEADER_AGE),
-                    record.get(HEADER_GENDER),
-                    record.get(HEADER_MARRIED),
-                    record.get(HEADER_CHILDREN),
-                    record.get(HEADER_DEGREE),
-                    record.get(HEADER_OCCUPATION),
-                    record.get(HEADER_INCOME),
-                    record.get(HEADER_TARIFF)
+                    record.get(Constants.HEADER_NUMBER),
+                    record.get(Constants.HEADER_AGE),
+                    record.get(Constants.HEADER_GENDER),
+                    record.get(Constants.HEADER_MARRIED),
+                    record.get(Constants.HEADER_CHILDREN),
+                    record.get(Constants.HEADER_DEGREE),
+                    record.get(Constants.HEADER_OCCUPATION),
+                    record.get(Constants.HEADER_INCOME),
+                    record.get(Constants.HEADER_TARIFF)
             )).collect(Collectors.toList());
         }
     }
 
+    /**
+     * Write a given list of Case objects with a given CSV-delimiter to any Appendable output (i.e. printer).
+     * <p>
+     * The output file will include a header record and print the following values:
+     * ID, age, gender, married, children, degree, occupation, income, tariff.
+     *
+     * @param cases
+     *         The list of Case objects to write
+     * @param delimiter
+     *         The delimiter between each CSV column.
+     * @param out
+     *         The Appendable output to which the data should be written.
+     * @throws IOException
+     */
     public static void write(List<Case> cases, Character delimiter, Appendable out) throws IOException {
         try (CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(delimiter))) {
             // print headers
-            writer.printRecord(HEADER_NUMBER, HEADER_AGE, HEADER_GENDER, HEADER_MARRIED,
-                    HEADER_CHILDREN, HEADER_DEGREE, HEADER_OCCUPATION, HEADER_INCOME, HEADER_TARIFF);
+            writer.printRecord(Constants.HEADER_NUMBER, Constants.HEADER_AGE, Constants.HEADER_GENDER, Constants.HEADER_MARRIED,
+                    Constants.HEADER_CHILDREN, Constants.HEADER_DEGREE, Constants.HEADER_OCCUPATION, Constants.HEADER_INCOME, Constants.HEADER_TARIFF);
             for (Case c : cases) {
                 writer.printRecord(c.getNumber(),
                         c.getAge(),

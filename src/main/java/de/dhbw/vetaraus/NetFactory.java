@@ -66,7 +66,7 @@ public class NetFactory {
             tariffSet.add(c.getTariff());
         }
 
-        Net net = new Net(Application.getEnvironment());
+        Net net = new Net(NeticaUtils.getEnvironment());
 
         Caseset caseset = getCaseset(cases);
 
@@ -110,12 +110,12 @@ public class NetFactory {
         CSV.write(cases, ',', new PrintWriter(out));
         InputStream in = new ByteArrayInputStream(out.toByteArray());
         Caseset caseset = new Caseset();
-        caseset.addCases(new Streamer(in, "Cases", Application.getEnvironment()), 1.0, null);
+        caseset.addCases(new Streamer(in, "Cases", NeticaUtils.getEnvironment()), 1.0, null);
         return caseset;
     }
 
     public static Net fromExisting(String path) throws NeticaException {
-        Environ env = Application.getEnvironment();
+        Environ env = NeticaUtils.getEnvironment();
         Net net = new Net(new Streamer(path));
         net.compile();
         return net;
