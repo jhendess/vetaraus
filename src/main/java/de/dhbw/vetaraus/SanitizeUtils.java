@@ -1,4 +1,4 @@
-package de.dhbw.vetaraus;/*
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2015 jhendess, nwolber
@@ -21,6 +21,8 @@ package de.dhbw.vetaraus;/*
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+package de.dhbw.vetaraus;
 
 import org.apache.commons.lang3.StringUtils;
 
