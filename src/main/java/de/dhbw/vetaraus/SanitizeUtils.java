@@ -37,7 +37,7 @@ public class SanitizeUtils {
 
     private static final String[] REPLACE_SEARCH_LIST = new String[]{" ", "-", "ä", "ö", "ü", "Ä", "Ö", "Ü", "ß", "<", ">"};
 
-    private static final String[] REPLACE_REPLACEMENT_LIST = new String[]{"_", "_", "ae", "oe", "ue", "AE", "OE", "UE", "ß", "LESS", "GREATER"};
+    private static final String[] REPLACE_REPLACEMENT_LIST = new String[]{"_", "_", "ae", "oe", "ue", "AE", "OE", "UE", "ss", "LESS", "GREATER"};
 
     public static List<Case> sanitizeCases(List<Case> cases) {
         return cases.stream().map(c -> new Case(
@@ -53,7 +53,7 @@ public class SanitizeUtils {
         )).collect(Collectors.toList());
     }
 
-    private static String sanitizeRecordValue(String input) {
+    static String sanitizeRecordValue(String input) {
         String output = input;
 
         // Append underscore before leading digit
