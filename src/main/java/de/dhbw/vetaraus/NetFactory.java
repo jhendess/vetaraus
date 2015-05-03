@@ -86,9 +86,9 @@ public class NetFactory {
         tariffNode.addLink(genderNode);
         tariffNode.addLink(marriedNode);
         tariffNode.addLink(childCountNode);
-        tariffNode.addLink(degreeNode);
-        tariffNode.addLink(occupationNode);
         tariffNode.addLink(incomeNode);
+        incomeNode.addLink(occupationNode);
+        occupationNode.addLink(degreeNode);
 
         nodeList.add(ageGroupNode);
         nodeList.add(genderNode);
